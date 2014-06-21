@@ -9,7 +9,7 @@ class TabelogCrawler
     @result = Struct.new("Result", :name, :latitude, :longitude)
   end
 
-  def run(url)
+  def run(url_string)
     uri = URI.parse(url_string)
     response = Net::HTTP.new(uri.host).get(uri.path, { "User-Agent" => USER_AGENT })
     document = Nokogiri::HTML(response.body)
