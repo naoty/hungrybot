@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  has_many :favorites
+
   validates :name,
     presence: true,
     uniqueness: { case_sensitive: false },
