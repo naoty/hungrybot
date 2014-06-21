@@ -5,7 +5,16 @@ class FavoritesController < ApplicationController
   def create
     favorite = @user.favorites.build(favorite_params)
     if favorite.save
-      render json: favorite
+      render json: favorite, status: :created
+    else
+      render json: favorite.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    favorite = @user.favorites.find(params[:id])
+    if favorite.destroy
+      render json: favorite, status: :ok
     else
       render json: favorite.errors, status: :unprocessable_entity
     end

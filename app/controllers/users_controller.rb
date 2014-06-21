@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   def show
     user = User.find_by!(name: params[:id])
     if user.authorized?(@access_token)
-      render json: user
+      render json: user, status: :created
     else
       render json: {}, status: :unauthorized
     end
