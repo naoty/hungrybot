@@ -2,6 +2,10 @@ class FavoritesController < ApplicationController
   protect_from_forgery with: :null_session
   before_action :set_access_token, :authenticate_user
 
+  def index
+    @favorites = @user.favorites.page(params[:page])
+  end
+
   def create
     favorite = @user.favorites.build(favorite_params)
     if favorite.save
