@@ -13,6 +13,7 @@ gem "kaminari", "~> 0.16.1"
 gem "bcrypt", "~> 3.1.7"
 gem "nokogiri"
 gem "geocoder"
+gem "pushover"
 
 group :production do
   gem "unicorn"

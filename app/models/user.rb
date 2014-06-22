@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
     presence: true,
     uniqueness: { case_sensitive: false },
     format: { with: /\A[a-zA-Z_]+\z/ }
+  validates :pushover_token, presence: true
 
   before_create :set_access_token
 

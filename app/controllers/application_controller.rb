@@ -11,4 +11,12 @@ class ApplicationController < ActionController::Base
       @access_token = Regexp.last_match[:access_token]
     end
   end
+
+  def authenticate_user
+    @user = User.find_by!(name: params[:user_id])
+    if !@user.authorized?(@access_token)
+      render json: {}, status: :unauthorized
+      return false
+    end
+  end
 end

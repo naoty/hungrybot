@@ -2,6 +2,8 @@ class FavoritesController < ApplicationController
   protect_from_forgery with: :null_session
   before_action :set_access_token, :authenticate_user
 
+  RECOMMENDATION_DISTANCE = 0.5
+
   def index
     @favorites = @user.favorites.page(params[:page])
   end
@@ -24,15 +26,26 @@ class FavoritesController < ApplicationController
     end
   end
 
-  private
+  def recommend
+    latitude = params[:latitude].to_f
+    longitude = params[:longitude].to_f
 
-  def authenticate_user
-    @user = User.find_by!(name: params[:user_id])
-    if !@user.authorized?(@access_token)
-      render json: {}, status: :unauthorized
-      return false
+    if latitude == 0.0 && longitude == 0.0
+      render json: {}, status: :bad_request
+    end
+
+    favorites = @user.favorites.near([latitude, longitude], RECOMMENDATION_DISTANCE)
+    favorite = favorites.sample
+
+    begin
+      favorite.pushover(@user.pushover_token)
+      render json: favorite, status: :accepted
+    rescue
+      render json: {}, status: :forbidden
     end
   end
+
+  private
 
   def favorite_params
     params.require(:favorite).permit(:url)

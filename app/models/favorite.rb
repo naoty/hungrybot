@@ -9,6 +9,20 @@ class Favorite < ActiveRecord::Base
 
   before_validation :crawl_tabelog
 
+  reverse_geocoded_by :latitude, :longitude
+
+  def pushover(user_token)
+    Pushover.notification(
+      title: self.name,
+      message: self.google_maps_link,
+      user: user_token
+    )
+  end
+
+  def google_maps_link
+    "https://www.google.com/maps/preview?q=#{self.latitude},#{self.longitude}"
+  end
+
   private
 
   def crawl_tabelog
