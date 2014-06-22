@@ -1,4 +1,4 @@
-require "tabelog_crawler"
+require "tabelog_proxy_crawler"
 
 class Favorite < ActiveRecord::Base
   belongs_to :user
@@ -12,7 +12,8 @@ class Favorite < ActiveRecord::Base
   private
 
   def crawl_tabelog
-    crawler = TabelogCrawler.new
+    # TODO: Enumerate the list of proxy servers until crawling successes
+    crawler = TabelogProxyCrawler.new("98.143.148.82", 7808)
     result = crawler.run(self.url)
     self.name = result.name
     self.latitude = result.latitude

@@ -1,24 +1,18 @@
-#!/usr/bin/env ruby
-
 require "net/http"
 require "nokogiri"
 require "geocoder"
 
 USER_AGENT = "hungrybot"
 
-Geocoder.configure do |config|
-  config.language = :ja
-  config.units = :km
-end
-
-class TabelogCrawler
-  def initialize
+class TabelogProxyCrawler
+  def initialize(proxy_url_string, port = 8080)
     @result = Struct.new("Result", :name, :latitude, :longitude)
+    @proxy = Net::HTTP::Proxy(proxy_url_string, port)
   end
 
   def run(url_string)
     uri = URI.parse(url_string)
-    response = Net::HTTP.new(uri.host).get(uri.path, { "User-Agent" => USER_AGENT })
+    response = @proxy.new(uri.host).get(uri.path, { "User-Agent" => USER_AGENT })
     document = Nokogiri::HTML(response.body)
 
     table = document.xpath("//table[@class='rst-data']")
@@ -28,15 +22,9 @@ class TabelogCrawler
     region = address.xpath("//span[@property='v:region']").inner_text.strip
     locality = address.xpath("//span[@property='v:locality']").inner_text.strip
     location = Geocoder.search(region + locality).first
-    latitude, longitude = location.coordinates
+    latitude, longitude = location.coordinates if location.present?
 
     @result.new(name, latitude, longitude)
   end
 end
-
-crawler = TabelogCrawler.new
-result = crawler.run("http://tabelog.com/tokyo/A1303/A130302/13130661/")
-puts "name: #{result.name}"
-puts "latitude: #{result.latitude}"
-puts "longitude: #{result.longitude}"
 
