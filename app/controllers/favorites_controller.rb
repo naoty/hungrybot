@@ -37,6 +37,11 @@ class FavoritesController < ApplicationController
     favorites = @user.favorites.near([latitude, longitude], RECOMMENDATION_DISTANCE)
     favorite = favorites.sample
 
+    if favorite.blank?
+      render json: {}, status: :not_found
+      return
+    end
+
     begin
       favorite.pushover(@user.pushover_token)
       render json: favorite, status: :accepted
