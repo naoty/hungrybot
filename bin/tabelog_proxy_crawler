@@ -35,7 +35,7 @@ class TabelogProxyCrawler
   end
 end
 
-crawler = TabelogProxyCrawler.new("116.58.185.6")
+crawler = TabelogProxyCrawler.new("98.143.148.82", 7808)
 result = crawler.run("http://tabelog.com/tokyo/A1303/A130302/13130661/")
 puts "name: #{result.name}"
 puts "latitude: #{result.latitude}"
